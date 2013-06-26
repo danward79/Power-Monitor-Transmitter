@@ -59,7 +59,7 @@ INT0  PWM (D2) PB2  5|    |10  PA3 (D7)
 							+---------------+
 */
 #define FILTERSETTLETIME 4000   //  Time (ms) to allow the filters to settle before sending data
-#define FREQ RF12_433MHZ        // Frequency of RF12B module can be RF12_433MHZ, RF12_868MHZ or RF12_915MHZ. You should use the one matching the module you have.
+#define FREQ RF12_868MHZ        // Frequency of RF12B module can be RF12_433MHZ, RF12_868MHZ or RF12_915MHZ. You should use the one matching the module you have.
 #define NODEID 5           		// emonTx RFM12B node ID
 #define GROUP 212   			// emonTx RFM12B wireless network group - needs to be same as emonBase and emonGLCD
 
