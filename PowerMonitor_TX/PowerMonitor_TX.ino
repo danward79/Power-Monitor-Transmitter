@@ -58,19 +58,23 @@ INT0  PWM (D2) PB2  5|    |10  PA3 (D7)
 				GND		7	|           	|14	Ant
 							+---------------+
 */
+
 #define FILTERSETTLETIME 4000   //  Time (ms) to allow the filters to settle before sending data
 #define FREQ RF12_868MHZ        // Frequency of RF12B module can be RF12_433MHZ, RF12_868MHZ or RF12_915MHZ. You should use the one matching the module you have.
 #define NODEID 5           		// emonTx RFM12B node ID
-#define GROUP 212   			// emonTx RFM12B wireless network group - needs to be same as emonBase and emonGLCD
+#define GROUP 212   			  // emonTx RFM12B wireless network group - needs to be same as emonBase and emonGLCD
+#define VOLTS 240   //as we are not measuring mains voltage. We will assume.
+
 
 #include <avr/wdt.h>                                                     
 #include <JeeLib.h>
+
 ISR(WDT_vect) { Sleepy::watchdogEvent(); }  // Attached JeeLib sleep function to Atmega328 watchdog -enables MCU to be put into sleep mode inbetween readings to reduce power consumption 
 
 #include "EmonLib.h"
 EnergyMonitor ct1;                                              		// Create  instances for each CT channel
 
-typedef struct { double current; int battery; } PayloadTX;      				// create structure - a neat way of packaging data for RF comms
+typedef struct { int power; int voltage; int battery; } PayloadTX;      				// create structure - a neat way of packaging data for RF comms
 PayloadTX emontx;                                                       
 
 boolean settled = false;
@@ -86,7 +90,8 @@ void setup()
 
 void loop() 
 { 
-    emontx.current = ct1.calcIrms(1480);                         //ct.calcIrms(number of wavelengths sample)
+    emontx.power = ct1.calcIrms(1480) * VOLTS;                         //ct.calcIrms(number of wavelengths sample)
+    emontx.voltage = VOLTS;
 	emontx.battery = ct1.readVcc();                                   
 
 	if (!settled && millis() > FILTERSETTLETIME) settled = true;
